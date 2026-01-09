@@ -60,6 +60,18 @@ public class Bank {
         int accno=scanner.nextInt();
         System.out.println("Your current balance is "+customer[accno].balance);
     }
+    static void transfer(){
+        System.out.println("Enter your account number:");
+        int accno1=scanner.nextInt();
+        System.out.println("Enter amount to transfer:");
+        int amount=scanner.nextInt();
+        System.out.println("Enter receiver account number:");
+        int accno2=scanner.nextInt();
+        customer[accno1].balance-=amount;
+        customer[accno2].balance+=amount;
+        System.out.println("Amount "+amount+" transferred successfully from account number "+accno1+" Name "+customer[accno1].name+"\n to account number "+accno2+" Name "+customer[accno2].name); 
+        System.out.println("Your updated balance is "+customer[accno1].balance);
+    }
 
     public static void main(String[] args)
     {   
@@ -71,7 +83,8 @@ public class Bank {
         int choice;
         
         do{
-          System.out.println("Main menu \n 1. Create Account \n 2. Deposit \n 3. Withdraw \n 4. Check Balance \n 5. Exit \nEnter your choice:-");
+
+          System.out.println("Main menu \n 1. Create Account \n 2. Deposit \n 3. Withdraw \n 4. Check Balance \n 5. Transfer \n 6. Exit \nEnter your choice:-");
           choice=scanner.nextInt();
           if(choice==1)
             {
@@ -89,8 +102,12 @@ public class Bank {
            {
                checkbalance();
            }
+          else if(choice==5)
+           {
+               transfer();
+           }
           
-        }while(choice!=5);
+        }while(choice!=6);
       
         scanner.close();
     }
