@@ -1,147 +1,201 @@
-import java.util.Scanner;
-class Customer{
-public String name;
-public int age;
-public long mnumber;
-public int balance=0;
-public String[] transaction=new String[100];
+import java.util.ArrayList;
+//import java.util.List;
 
-public int j=0;
-Customer(String name,int age,long mnumber)
-{
-    
-    this.name=name;
-    this.age=age;
-    this.mnumber=mnumber;
-  
-}
-
-}
 public class Bank {
-   public static int i =0;
-   public static Scanner scanner =new Scanner(System.in);
-   static Customer[] customer=new Customer[100];
-
-    static void createacc(){
-        //int totalacc=100;
-           System.out.println("Fill the detail to create you account \n Name:");  //name input
-            String name=scanner.next();
-            System.out.println("Age:");                                            //age input
-            int age=scanner.nextInt();
-            if(age<18){
-               System.out.println(name+" your age is invalid . Age must be above 18 !");
-               System.out.println("Age:");
-               age=scanner.nextInt();
+   public static ArrayList<Customer> customers=new ArrayList<>();
+   public static ArrayList<Account> accounts=new ArrayList<>();
+   public static ArrayList<Transaction> transactions=new ArrayList<>();
+    static void createCustomer(){
+       String name=IO.readln("Enter your name : ");
+       String dob=IO.readln("Enter your BirthDate : ");
+       String Mobilenum=IO.readln("Enter your Mobile number : ");
+       String Address=IO.readln("Enter your Address : ");
+       String Pan=IO.readln("Enter your Pancard number : ");
+       
+       Customer newCustomer= new Customer(name,dob,Mobilenum,Address,Pan);
+       customers.add(newCustomer) ;
+       int custid=customers.size();
+       newCustomer.strCustID=Mobilenum+custid;
+       IO.println("\n\n Customer created successfully \nCustomer ID : "+newCustomer.strCustID+"\nName : "+name+"\nBirth date : "+dob+"\nMobile number : "+Mobilenum+"\nAddress : "+Address+"\nPan card number : "+Pan+"\n");
+   }
+   static void viewcustomer(){
+        String custid=IO.readln("Enter your customer ID:");
+        for(Customer c:customers){
+            if(c.strCustID.equals(custid)){
+                c.viewdetails();
+                return;
             }
-            System.out.println("Mobile number:");                             //num input
-            int mnumber=scanner.nextInt();
-            customer[i]=new Customer(name, age, mnumber);                         //making object of customer[]
-            System.out.println("Account created successfully for "+name+"!!\n Remember your Account number is "+i+"\n\n");
-            i++;   
         }
-    static void deposit(){
-        System.out.println("Enter account number:");
-        int accno=scanner.nextInt();
-        System.out.println("Enter amount to deposit:");
-        int amount=scanner.nextInt();
-        customer[accno].balance+=amount;
-        String transaction="Amount "+amount+" deposited successfully in account number "+accno+" Name "+customer[accno].name;
-        System.out.println(transaction);
-        add_transaction(accno, transaction);
-        System.out.println("updated balance is "+customer[accno].balance);
+        IO.println("Customer not found / Invalid customer ID\n");
+   }
+   static void customerModule(){
+      String choice = IO.readln("Customer MENU \n1. Create Customer \n2. View Customer \n3. exit\nEnter your choice : ");
+      switch (choice) {
+        case "1":
+            createCustomer();
+            break;
+        case "2":
+            viewcustomer();
+            break;
+        case "3":
+            System.exit(0);
+        default:
+            IO.print("invalid input");
+            break;
+      }
+   }
 
-    }
-    static void withdraw(){
-       System.out.println("Enter account number:");
-        int accno=scanner.nextInt();
-        System.out.println("Enter amount to withdraw:");
-        int amount=scanner.nextInt();
-        customer[accno].balance-=amount;
-        String transaction="Amount "+amount+" withdraw successfully from account number "+accno+" Name "+customer[accno].name;
-        System.out.println(transaction);
-        add_transaction(accno, transaction);
-       // System.out.println("Amount "+amount+" withdraw successfully from account number "+accno+" Name "+customer[accno].name); 
-        System.out.println("updated balance is "+customer[accno].balance);
-    }
-    static void checkbalance(){
-        System.out.println("Enter account number:");
-        int accno=scanner.nextInt();
-        System.out.println("Your current balance is "+customer[accno].balance);
-    }
-    static void transfer(){
-        System.out.println("Enter your account number:");
-        int accno1=scanner.nextInt();
-        System.out.println("Enter amount to transfer:");
-        int amount=scanner.nextInt();
-        System.out.println("Enter receiver account number:");
-        int accno2=scanner.nextInt();
-        customer[accno1].balance-=amount;
-        customer[accno2].balance+=amount;
-        String transaction="Amount "+amount+" transferred successfully from account number "+accno1+" Name "+customer[accno1].name+"\n to account number "+accno2+" Name "+customer[accno2].name;
-        System.out.println(transaction); 
-        add_transaction(accno1, transaction);
-        add_transaction(accno2, transaction);
-
-        System.out.println("Your updated balance is "+customer[accno1].balance);
-    }
-    static void add_transaction(int accno,String transaction)
-    {
-        customer[accno].transaction[customer[accno].j]=transaction;
-        customer[accno].j++;
-
-    }
-    static void show_transaction()
-    {
-        System.out.println("Enter account number:");
-        int accno=scanner.nextInt();
-        int n=0;
-        System.out.println("Transaction history of Account number "+accno);
-        while(n!=customer[accno].j)
-        {
-          System.out.println(customer[accno].transaction[n]);
-          n++;
+   //account
+   static void createAccount(){
+        String custid=IO.readln("Enter your customer ID : ");
+        for(Customer c:customers){
+                if(c.strCustID.equals(custid)){
+                String accType=IO.readln("Enter Account type (current / saving / fix) : ");
+                Account newAccount=new Account(custid, accType);
+                accounts.add(newAccount);
+                newAccount.strAccID=String.valueOf(accounts.size());
+                IO.println(" Account created successfully \nCustomer ID : "+custid+"\nAccount ID : "+newAccount.strAccID+"\nAccount type : "+accType+"\n");
+                break;
+                }
+                else{
+                    IO.println("Invalid customer ID");
+                }
         }
     }
-    public static void main(String[] args)
-    {   
-         
-        Scanner scanner =new Scanner(System.in);
-        
-        System.out.println("Welcome to Bank Applicaton");
-        
-        int choice;
-        
-        do{
-
-          System.out.println("Main menu \n 1. Create Account \n 2. Deposit \n 3. Withdraw \n 4. Check Balance \n 5. Transfer \n 6. Show transaction history \n 7. Exit \nEnter your choice:-");
-          choice=scanner.nextInt();
-          if(choice==1)
-            {
-                createacc();                                                         
-           }
-           else if(choice==2)
-           {
-               deposit();
-           }
-           else if(choice==3)
-           {
-               withdraw();
-           }
-           else if(choice==4)
-           {
-               checkbalance();
-           }
-          else if(choice==5)
-           {
-               transfer();
-           }
-           else if(choice==6)
-           {
-            show_transaction();
-           }
-          
-        }while(choice!=7);
+    static void viewAccount(){
+       String accid=IO.readln("Enter your Account ID : ");
+       for(Account a:accounts){
+            if(a.strAccID.equals(accid)){
+                IO.println(" Account created successfully \nCustomer ID : "+a.strCustID+"\nAccount ID : "+a.strAccID+"\nAccount type : "+a.strAcctype+"\nBalance : "+a.balance+"\n");
+            }
+        }
+    }   
       
-        scanner.close();
+   static void accountModule(){
+     String choice = IO.readln("Account MENU \n1. Create Account \n2. View Account details \n3. Deposit \n4. Withdraw \n5.Transfer \n6. exit\nEnter your choice : ");
+     switch (choice) {
+        case "1":
+            createAccount(); 
+            break;
+        case "2":
+            String accid=IO.readln("Enter your Account ID : ");
+            for(Account a:Bank.accounts){
+                if(a.strAccID.equals(accid)){
+                   a.viewdetails();;
+                }
+                return;
+            }
+            IO.println("Account not found . \n");
+            break;
+        case "3":
+            accid=IO.readln("Enter your Account ID : ");
+            for(Account a:Bank.accounts){
+                if(a.strAccID.equals(accid)){
+                   a.deposit();
+                }
+                return;
+            }
+            IO.println("Account not found . \n");
+            break;
+        case "4":
+            accid=IO.readln("Enter your Account ID : ");
+            for(Account a:Bank.accounts){
+                if(a.strAccID.equals(accid)){
+                   a.withdraw();                  
+                }
+                return;
+
+            }
+            IO.println("Account not found . \n");
+            break;
+        case "5":
+            accid=IO.readln("Enter your Account ID : ");
+            for(Account a:Bank.accounts){
+                if(a.strAccID.equals(accid)){
+                    a.transfer();
+                    return;
+                }
+            }
+            IO.println("Account not found !");
+            break;
+        case "6":
+            System.exit(0);
+        default:
+            break;
+     }
+   }
+   //transaction
+   static void transactionmodule(){
+    String choice=IO.readln("\n\nTransaction module\n 1.Get full transaction history\n 2.Get credited transactions\n 3.Get debited transactions\nEnter you choice: ");
+    switch(choice){
+        case "1":
+            String accid=IO.readln("Enter your Account ID : ");
+            for(Account a:Bank.accounts){
+                if(a.strAccID.equals(accid)){
+                    for(Transaction t: Bank.transactions){
+                        if(a.strAccID.equals(t.strAccID)){
+                            IO.println("\nAccount ID: "+t.strAccID+" Transaction ID: "+t.strTransID+"  Transaction Type: "+t.strTransType+" Amount: "+t.amount+"\n");
+                        }
+                    }
+                    return;
+                }
+            }
+            IO.println("Account not found !");
+            break;
+        case "2":
+            accid=IO.readln("Enter your Account ID : ");
+                for(Account a:Bank.accounts){
+                    if(a.strAccID.equals(accid)){
+                        for(Transaction t: Bank.transactions){
+                            if(a.strAccID.equals(t.strAccID) && t.strTransType.equalsIgnoreCase("credited")){
+                                IO.println("\nAccount ID: "+t.strAccID+" Transaction ID: "+t.strTransID+"  Transaction Type: "+t.strTransType+" Amount: "+t.amount+"\n");
+                            }
+                        }
+                        return;
+                    }
+                }
+                IO.println("Account not found !");
+                break;
+        case "3":
+            accid=IO.readln("Enter your Account ID : ");
+            for(Account a:Bank.accounts){
+                if(a.strAccID.equals(accid)){
+                    for(Transaction t: Bank.transactions){
+                        if(a.strAccID.equals(t.strAccID) && t.strTransType.equalsIgnoreCase("debited")){
+                            IO.println("\nAccount ID: "+t.strAccID+" Transaction ID: "+t.strTransID+"  Transaction Type: "+t.strTransType+" Amount: "+t.amount+"\n"); // remove this and add function !!!!!!
+                        }
+                    }
+                    return;
+                }
+            }
+            IO.println("Account not found !");
+            break;
+        case "4":
+            System.exit(0); 
+        default:
+            break;       
+    }
+   }
+    public static void main(String[] args) {
+        IO.println("welcome to bank management system ");
+        while (true) {
+          String choice = IO.readln("MAIN MENU \n1. Customer module \n2. Account module \n3.transaction module \n4. exit\nEnter your choice : ");
+            switch (choice) {
+                case "1":
+                    customerModule();
+                    break;
+                case "2":
+                    accountModule();
+                    break;
+                case "3":
+                    transactionmodule();
+                case "4":
+                    System.exit(0);
+                    break;
+                default:
+                    IO.println("Invalid choice");
+                    break;
+            }
+        }
     }
 }
